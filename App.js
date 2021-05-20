@@ -14,17 +14,25 @@ import {
   Text,
   View,
   StatusBar,
+  Button,
 } from 'react-native';
 
 const DATA = [...Array(10).keys()];
 const ITEM_HEIGHT = 200;
 
+function generateRandomInteger(min, max) {
+  return Math.floor(min + Math.random() * (max + 1 - min));
+}
+
 const App = () => {
   const [data, setData] = useState([]);
+  const [value, setValue] = useState(0);
   const flatListRef = useRef();
 
   useEffect(() => {
-    setData([...DATA, ...DATA]);
+    const newData = [...DATA, ...DATA];
+    setData(newData);
+    setValue(newData.length / 2);
   }, []);
 
   const onScroll = event => {
@@ -59,9 +67,21 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Button
+        title="A"
+        onPress={() => {
+          const DATA = [...Array(11).keys()];
+          const newData = [...DATA, ...DATA];
+          setData(newData);
+          flatListRef.current.scrollToOffset({
+            offset: ITEM_HEIGHT * DATA.length,
+            animated: false,
+          });
+        }}
+      />
       <FlatList
         ref={flatListRef}
-        initialScrollIndex={DATA.length}
+        initialScrollIndex={value}
         data={data}
         renderItem={renderItem}
         keyExtractor={(_, index) => String(index)}
@@ -74,6 +94,9 @@ const App = () => {
           index,
         })}
         showsVerticalScrollIndicator={false}
+        // windowSize={5}
+        // maxToRenderPerBatch={5}
+        // updateCellsBatchingPeriod={30}
       />
     </SafeAreaView>
   );
